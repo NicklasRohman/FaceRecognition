@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
 import Tensorflow from "./components/Tensorflow.vue";
 </script>
 
@@ -12,7 +11,6 @@ import Tensorflow from "./components/Tensorflow.vue";
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
-  <HelloWorld msg="Vite + Vue" />
   <Tensorflow />
 </template>
 
