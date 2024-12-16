@@ -18,8 +18,17 @@ export default defineComponent({
 
     onMounted(async () => {
       if (video.value && canvas.value) {
-        const model = await faceLandmarksDetection.load(
-          faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
+        const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
+
+        const detectorConfig: faceLandmarksDetection.MediaPipeFaceMeshMediaPipeModelConfig =
+          {
+            runtime: "mediapipe" as const,
+            solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh",
+            refineLandmarks: true,
+          };
+        const detector = await faceLandmarksDetection.createDetector(
+          model,
+          detectorConfig
         );
 
         // Start video stream
@@ -32,9 +41,7 @@ export default defineComponent({
         // Detect faces
         const detectFaces = async () => {
           if (video.value) {
-            const predictions = await model.estimateFaces({
-              input: video.value,
-            });
+            const predictions = await detector.estimateFaces(video.value);
 
             // Draw predictions on canvas
             if (canvas.value) {
