@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js 20
         uses: actions/setup-node@v2
         with:
-          node-version: "20"
+          node-version: "20.x"
       - name: Install dependencies and build
         run: |
           cd facial-recognition
