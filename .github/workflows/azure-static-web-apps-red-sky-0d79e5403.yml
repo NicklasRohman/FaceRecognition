@@ -20,11 +20,9 @@ jobs:
           submodules: true
           lfs: false
       - name: Set up Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: "20"
-      - name: Verify Node.js version
-        run: node -v
       - name: Install dependencies and build
         run: |
           cd facial-recognition
