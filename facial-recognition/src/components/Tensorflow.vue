@@ -24,7 +24,7 @@ export default defineComponent({
           {
             runtime: "mediapipe" as const,
             solutionPath:
-              "https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.3",
+              "https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.min.js",
           };
         detector = await faceDetection.createDetector(model, detectorConfig);
       } catch (error) {
