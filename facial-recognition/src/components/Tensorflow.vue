@@ -1,5 +1,4 @@
 <template>
-  <div>This is tensorflow</div>
   <div>
     <video ref="video" autoplay></video>
     <canvas ref="canvas"></canvas>
@@ -8,66 +7,81 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
-import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
+import * as faceDetection from "@tensorflow-models/face-detection";
+import "@mediapipe/face_detection";
 
 export default defineComponent({
-  name: "Tensorflow",
+  name: "FaceRecognition",
   setup() {
     const video = ref<HTMLVideoElement | null>(null);
     const canvas = ref<HTMLCanvasElement | null>(null);
+    let detector: faceDetection.FaceDetector | null = null;
+
+    const initializeDetector = async () => {
+      try {
+        const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
+        const detectorConfig: faceDetection.MediaPipeFaceDetectorMediaPipeModelConfig =
+          {
+            runtime: "mediapipe" as const,
+            solutionPath:
+              "https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.3",
+          };
+        detector = await faceDetection.createDetector(model, detectorConfig);
+      } catch (error) {
+        console.error("Error initializing detector:", error);
+      }
+    };
+
+    const startVideoStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        if (video.value) {
+          video.value.srcObject = stream;
+        }
+      } catch (error) {
+        console.error("Error starting video stream:", error);
+      }
+    };
+
+    const detectFaces = async () => {
+      try {
+        if (video.value && detector) {
+          const faces = await detector.estimateFaces(video.value);
+          drawFaces(faces);
+        }
+      } catch (error) {
+        console.error("Error detecting faces:", error);
+      }
+      requestAnimationFrame(detectFaces);
+    };
+
+    const drawFaces = (faces: faceDetection.Face[]) => {
+      if (canvas.value) {
+        const ctx = canvas.value.getContext("2d");
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+          faces.forEach((face) => {
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "red";
+            ctx.rect(
+              face.box.xMin,
+              face.box.yMin,
+              face.box.width,
+              face.box.height
+            );
+            ctx.stroke();
+          });
+        }
+      }
+    };
 
     onMounted(async () => {
       if (video.value && canvas.value) {
-        const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
-
-        const detectorConfig: faceLandmarksDetection.MediaPipeFaceMeshMediaPipeModelConfig =
-          {
-            runtime: "mediapipe" as const,
-            solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh",
-            refineLandmarks: true,
-          };
-        const detector = await faceLandmarksDetection.createDetector(
-          model,
-          detectorConfig
-        );
-
-        // Start video stream
-        navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-          if (video.value) {
-            video.value.srcObject = stream;
-          }
-        });
-
-        // Detect faces
-        const detectFaces = async () => {
-          if (video.value) {
-            const predictions = await detector.estimateFaces(video.value);
-
-            // Draw predictions on canvas
-            if (canvas.value) {
-              const ctx = canvas.value.getContext("2d");
-              if (ctx) {
-                ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-                predictions.forEach((prediction: any) => {
-                  ctx.beginPath();
-                  ctx.lineWidth = 2;
-                  ctx.strokeStyle = "red";
-                  ctx.rect(
-                    prediction.boundingBox.topLeft[0],
-                    prediction.boundingBox.topLeft[1],
-                    prediction.boundingBox.bottomRight[0] -
-                      prediction.boundingBox.topLeft[0],
-                    prediction.boundingBox.bottomRight[1] -
-                      prediction.boundingBox.topLeft[1]
-                  );
-                  ctx.stroke();
-                });
-              }
-            }
-          }
-          requestAnimationFrame(detectFaces);
-        };
-
+        await initializeDetector();
+        await startVideoStream();
         detectFaces();
       }
     });
