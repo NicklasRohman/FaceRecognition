@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: "20.x"
       - name: Show oryx-manifest.toml
-        run: cat oryx-manifest.toml
+        run: cat facial-recognition/oryx-manifest.toml
       - name: Install dependencies and build
         run: |
           cd facial-recognition
