@@ -22,9 +22,10 @@ export default defineComponent({
         const model = faceDetection.SupportedModels.MediaPipeFaceDetector;
         const detectorConfig: faceDetection.MediaPipeFaceDetectorMediaPipeModelConfig =
           {
-            runtime: "mediapipe" as const,
-            solutionPath:
-              "https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.min.js",
+            runtime: "mediapipe",
+            solutionPath: "base/node_modules/@mediapipe/face_mesh",
+            //https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/
+            //"https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.min.js",
           };
         detector = await faceDetection.createDetector(model, detectorConfig);
       } catch (error) {
