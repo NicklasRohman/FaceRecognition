@@ -28,8 +28,6 @@ jobs:
           cd facial-recognition
           npm install
           npm run build
-      - name: List build output
-        run: ls -la /github/workspace/facial-recognition/dist
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
