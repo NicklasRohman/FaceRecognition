@@ -15,6 +15,7 @@
     "@mediapipe/face_detection": "^0.4.1646425229",
     "@tensorflow-models/face-landmarks-detection": "^1.0.6",
     "@tensorflow/tfjs": "^4.22.0",
+    "face-api.js": "^0.22.2",
     "lru-cache": "^11.0.2",
     "vue": "^3.5.13"
   },
